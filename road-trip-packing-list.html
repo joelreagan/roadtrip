@@ -195,6 +195,7 @@
             border-radius: 10px;
             height: 30px;
             overflow: hidden;
+            position: relative;
         }
 
         .progress-fill {
@@ -207,6 +208,18 @@
             color: white;
             font-weight: 600;
             font-size: 14px;
+            min-width: 60px;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 14px;
+            pointer-events: none;
         }
 
         .delete-btn {
@@ -356,7 +369,8 @@
         </div>
 
         <div class="progress-bar">
-            <div class="progress-fill" id="progressBar">0%</div>
+            <div class="progress-fill" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0% Packed</div>
         </div>
 
         <div id="packingList"></div>
@@ -757,8 +771,17 @@
             // Update progress bar
             const progress = calculateProgress();
             const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
             progressBar.style.width = progress + '%';
-            progressBar.textContent = progress + '% Packed';
+            
+            if (progress > 0) {
+                progressBar.textContent = progress + '% Packed';
+                progressText.style.display = 'none';
+            } else {
+                progressBar.textContent = '';
+                progressText.textContent = '0% Packed';
+                progressText.style.display = 'block';
+            }
             
             let html = '';
             
