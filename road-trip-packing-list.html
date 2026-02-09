@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Trip Packing List</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .trip-info {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f7fafc;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .item:hover {
+            background: #edf2f7;
+        }
+
+        .item.completed {
+            opacity: 0.6;
+        }
+
+        .item-name {
+            flex: 1;
+            font-size: 16px;
+            color: #2d3748;
+            padding-left: 10px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .checkbox-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+        }
+
+        input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .add-item-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .add-item-section h3 {
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .add-item-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .progress-bar {
+            margin-bottom: 30px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background: #fc8181;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #f56565;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .checkbox-group {
+                gap: 15px;
+            }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .saved-trip-item {
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saved-trip-item:hover {
+            background: #edf2f7;
+        }
+
+        .trip-item-info {
+            flex: 1;
+        }
+
+        .trip-item-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .trip-item-date {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .trip-item-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Road Trip Packing List</h1>
+        <div class="trip-info" id="tripInfo">Current Trip</div>
+
+        <div class="controls">
+            <button class="btn-primary" onclick="startNewTrip()">🆕 New Trip</button>
+            <button class="btn-secondary" onclick="showSaveDialog()">💾 Save Trip</button>
+            <button class="btn-secondary" onclick="showLoadDialog()">📂 Load Trip</button>
+            <button class="btn-secondary" onclick="showArchiveDialog()">📦 Archive</button>
+            <button class="btn-secondary" onclick="resetMasterList()">🔄 Reset Master List</button>
+            <button class="btn-danger" onclick="clearAllChecks()">Clear All Checkboxes</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar">0%</div>
+        </div>
+
+        <div id="packingList"></div>
+
+        <div class="add-item-section">
+            <h3>Add Item to This Trip</h3>
+            <div class="add-item-form">
+                <select id="categorySelect">
+                    <option value="Supplies">Supplies</option>
+                    <option value="Equipment">Equipment</option>
+                    <option value="Luggage, Etc.">Luggage, Etc.</option>
+                </select>
+                <input type="text" id="newItemInput" placeholder="Item name...">
+                <button class="btn-primary" onclick="addItem()">Add Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Modal -->
+    <div id="saveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">💾 Save Trip</div>
+            <input type="text" id="saveTripName" class="modal-input" placeholder="Enter trip name (e.g., 'Nashville Trip')">
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeModal('saveModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveTrip()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Modal -->
+    <div id="loadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📂 Load Saved Trip</div>
+            <div id="savedTripsList"></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeModal('loadModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archive Modal -->
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">📦 Archived Trips</div>
+            <div id="archivedTripsList"></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeModal('archiveModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Master list of default items
+        const masterList = {
+            "Supplies": [
+                "Frequency Cards",
+                "Business Cards",
+                "Shirts, Pens, Giveaways",
+                "Keyboard",
+                "Packets",
+                "Stickers",
+                "KL/A1 Jackets/Coats"
+            ],
+            "Equipment": [
+                "RodeCaster/Mics/Cords/Etc.",
+                "Headphone/Power Cord Bag",
+                "Old Mac Setup Suitcase/Bag",
+                "KL Backpack with iPad/HP",
+                "WMS Backpack with Mac",
+                "Apple TV",
+                "Three Acer Monitors",
+                "Extra Apple Watch"
+            ],
+            "Luggage, Etc.": [
+                "Suitcase",
+                "Toiletries",
+                "CPAP",
+                "Retainer",
+                "Water/KL Thermos/Recycle",
+                "Meds"
+            ]
+        };
+
+        // Load current trip data from localStorage
+        function loadTripData() {
+            const saved = localStorage.getItem('currentTrip');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            // Initialize with master list
+            return initializeTrip();
+        }
+
+        function initializeTrip(tripName = null) {
+            const trip = {
+                name: tripName || 'Untitled Trip',
+                startDate: new Date().toLocaleDateString(),
+                lastModified: new Date().toISOString(),
+                items: {}
+            };
+            
+            for (const category in masterList) {
+                trip.items[category] = masterList[category].map(name => ({
+                    name: name,
+                    staged: false,
+                    packed: false,
+                    isCustom: false
+                }));
+            }
+            
+            return trip;
+        }
+
+        function saveTripData(trip) {
+            trip.lastModified = new Date().toISOString();
+            localStorage.setItem('currentTrip', JSON.stringify(trip));
+        }
+
+        function getSavedTrips() {
+            const saved = localStorage.getItem('savedTrips');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function getArchivedTrips() {
+            const archived = localStorage.getItem('archivedTrips');
+            return archived ? JSON.parse(archived) : [];
+        }
+
+        function startNewTrip() {
+            const tripName = prompt('Enter a name for this new trip:', 'Untitled Trip');
+            if (tripName === null) return; // User cancelled
+            
+            if (confirm('Start a new trip? This will clear the current trip (make sure to save if needed).')) {
+                const newTrip = initializeTrip(tripName);
+                saveTripData(newTrip);
+                renderList();
+            }
+        }
+
+        function showSaveDialog() {
+            const currentTrip = loadTripData();
+            document.getElementById('saveTripName').value = currentTrip.name;
+            openModal('saveModal');
+        }
+
+        function saveTrip() {
+            const tripName = document.getElementById('saveTripName').value.trim();
+            if (!tripName) {
+                alert('Please enter a trip name');
+                return;
+            }
+
+            const currentTrip = loadTripData();
+            currentTrip.name = tripName;
+            currentTrip.lastModified = new Date().toISOString();
+
+            const savedTrips = getSavedTrips();
+            
+            // Check if trip with this name already exists
+            const existingIndex = savedTrips.findIndex(t => t.name === tripName);
+            if (existingIndex >= 0) {
+                if (confirm(`A trip named "${tripName}" already exists. Overwrite it?`)) {
+                    savedTrips[existingIndex] = currentTrip;
+                } else {
+                    return;
+                }
+            } else {
+                savedTrips.push(currentTrip);
+            }
+
+            localStorage.setItem('savedTrips', JSON.stringify(savedTrips));
+            saveTripData(currentTrip);
+            closeModal('saveModal');
+            renderList();
+            alert('Trip saved successfully!');
+        }
+
+        function showLoadDialog() {
+            const savedTrips = getSavedTrips();
+            const container = document.getElementById('savedTripsList');
+            
+            if (savedTrips.length === 0) {
+                container.innerHTML = '<div class="empty-state">No saved trips yet. Save your current trip to see it here!</div>';
+            } else {
+                let html = '';
+                savedTrips.forEach((trip, index) => {
+                    const date = new Date(trip.lastModified).toLocaleDateString();
+                    html += `
+                        <div class="saved-trip-item">
+                            <div class="trip-item-info">
+                                <div class="trip-item-name">${trip.name}</div>
+                                <div class="trip-item-date">Last modified: ${date}</div>
+                            </div>
+                            <div class="trip-item-buttons">
+                                <button class="btn-primary btn-small" onclick="loadTrip(${index})">Load</button>
+                                <button class="btn-secondary btn-small" onclick="archiveTrip(${index})">Archive</button>
+                                <button class="btn-danger btn-small" onclick="deleteSavedTrip(${index})">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            
+            openModal('loadModal');
+        }
+
+        function loadTrip(index) {
+            if (confirm('Load this trip? Your current trip will be replaced (make sure to save if needed).')) {
+                const savedTrips = getSavedTrips();
+                const trip = savedTrips[index];
+                saveTripData(trip);
+                closeModal('loadModal');
+                renderList();
+            }
+        }
+
+        function deleteSavedTrip(index) {
+            if (confirm('Delete this saved trip?')) {
+                const savedTrips = getSavedTrips();
+                savedTrips.splice(index, 1);
+                localStorage.setItem('savedTrips', JSON.stringify(savedTrips));
+                showLoadDialog(); // Refresh the list
+            }
+        }
+
+        function archiveTrip(index) {
+            if (confirm('Archive this trip? You can view it later in the Archive.')) {
+                const savedTrips = getSavedTrips();
+                const archivedTrips = getArchivedTrips();
+                
+                const trip = savedTrips[index];
+                trip.archivedDate = new Date().toISOString();
+                
+                archivedTrips.push(trip);
+                savedTrips.splice(index, 1);
+                
+                localStorage.setItem('archivedTrips', JSON.stringify(archivedTrips));
+                localStorage.setItem('savedTrips', JSON.stringify(savedTrips));
+                
+                showLoadDialog(); // Refresh the list
+            }
+        }
+
+        function showArchiveDialog() {
+            const archivedTrips = getArchivedTrips();
+            const container = document.getElementById('archivedTripsList');
+            
+            if (archivedTrips.length === 0) {
+                container.innerHTML = '<div class="empty-state">No archived trips yet.</div>';
+            } else {
+                let html = '';
+                archivedTrips.forEach((trip, index) => {
+                    const date = new Date(trip.archivedDate).toLocaleDateString();
+                    html += `
+                        <div class="saved-trip-item">
+                            <div class="trip-item-info">
+                                <div class="trip-item-name">${trip.name}</div>
+                                <div class="trip-item-date">Archived: ${date}</div>
+                            </div>
+                            <div class="trip-item-buttons">
+                                <button class="btn-secondary btn-small" onclick="unarchiveTrip(${index})">Unarchive</button>
+                                <button class="btn-danger btn-small" onclick="deleteArchivedTrip(${index})">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            
+            openModal('archiveModal');
+        }
+
+        function unarchiveTrip(index) {
+            const archivedTrips = getArchivedTrips();
+            const savedTrips = getSavedTrips();
+            
+            const trip = archivedTrips[index];
+            delete trip.archivedDate;
+            
+            savedTrips.push(trip);
+            archivedTrips.splice(index, 1);
+            
+            localStorage.setItem('archivedTrips', JSON.stringify(archivedTrips));
+            localStorage.setItem('savedTrips', JSON.stringify(savedTrips));
+            
+            showArchiveDialog(); // Refresh the list
+            alert('Trip unarchived!');
+        }
+
+        function deleteArchivedTrip(index) {
+            if (confirm('Permanently delete this archived trip?')) {
+                const archivedTrips = getArchivedTrips();
+                archivedTrips.splice(index, 1);
+                localStorage.setItem('archivedTrips', JSON.stringify(archivedTrips));
+                showArchiveDialog(); // Refresh the list
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        function resetMasterList() {
+            if (confirm('Reset to the original master list? This will remove any custom items you added.')) {
+                const trip = initializeTrip();
+                saveTripData(trip);
+                renderList();
+            }
+        }
+
+        function clearAllChecks() {
+            if (confirm('Clear all checkboxes?')) {
+                const trip = loadTripData();
+                for (const category in trip.items) {
+                    trip.items[category].forEach(item => {
+                        item.staged = false;
+                        item.packed = false;
+                    });
+                }
+                saveTripData(trip);
+                renderList();
+            }
+        }
+
+        function toggleCheckbox(category, index, type) {
+            const trip = loadTripData();
+            trip.items[category][index][type] = !trip.items[category][index][type];
+            saveTripData(trip);
+            renderList();
+        }
+
+        function addItem() {
+            const category = document.getElementById('categorySelect').value;
+            const itemName = document.getElementById('newItemInput').value.trim();
+            
+            if (!itemName) {
+                alert('Please enter an item name');
+                return;
+            }
+            
+            const trip = loadTripData();
+            trip.items[category].push({
+                name: itemName,
+                staged: false,
+                packed: false,
+                isCustom: true
+            });
+            
+            saveTripData(trip);
+            document.getElementById('newItemInput').value = '';
+            renderList();
+        }
+
+        function deleteItem(category, index) {
+            if (confirm('Delete this item?')) {
+                const trip = loadTripData();
+                trip.items[category].splice(index, 1);
+                saveTripData(trip);
+                renderList();
+            }
+        }
+
+        function calculateProgress() {
+            const trip = loadTripData();
+            let total = 0;
+            let packed = 0;
+            
+            for (const category in trip.items) {
+                trip.items[category].forEach(item => {
+                    total++;
+                    if (item.packed) packed++;
+                });
+            }
+            
+            return total === 0 ? 0 : Math.round((packed / total) * 100);
+        }
+
+        function renderList() {
+            const trip = loadTripData();
+            const container = document.getElementById('packingList');
+            
+            // Update trip info
+            document.getElementById('tripInfo').textContent = `${trip.name} - Started: ${trip.startDate}`;
+            
+            // Update progress bar
+            const progress = calculateProgress();
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = progress + '% Packed';
+            
+            let html = '';
+            
+            for (const category in trip.items) {
+                html += `<div class="category">
+                    <div class="category-title">${category}</div>`;
+                
+                trip.items[category].forEach((item, index) => {
+                    const completedClass = item.staged && item.packed ? 'completed' : '';
+                    html += `
+                        <div class="item ${completedClass}">
+                            <div class="checkbox-group">
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" 
+                                           ${item.staged ? 'checked' : ''} 
+                                           onchange="toggleCheckbox('${category}', ${index}, 'staged')">
+                                    <span class="checkbox-label">Staged</span>
+                                </div>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" 
+                                           ${item.packed ? 'checked' : ''} 
+                                           onchange="toggleCheckbox('${category}', ${index}, 'packed')">
+                                    <span class="checkbox-label">Packed</span>
+                                </div>
+                            </div>
+                            <div class="item-name">${item.name}</div>
+                            ${item.isCustom ? `<button class="delete-btn" onclick="deleteItem('${category}', ${index})">Delete</button>` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Initialize on load
+        renderList();
+    </script>
+</body>
+</html>
